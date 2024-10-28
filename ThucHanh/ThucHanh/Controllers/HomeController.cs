@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using ThucHanh.Models;
+using X.PagedList;
 
 namespace ThucHanh.Controllers
 {
@@ -14,9 +16,12 @@ namespace ThucHanh.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
-            var lst = db.Products.ToList();
+            int pageSize = 8;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
+            var lstsanpham = db.Products.AsNoTracking().OrderBy(x=>x.ProductName);
+            PagedList<Product> lst = new PagedList<Product>(lstsanpham, pageNumber, pageSize);
             return View(lst);
         }
 
